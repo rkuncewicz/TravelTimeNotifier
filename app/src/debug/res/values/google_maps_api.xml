@@ -1,0 +1,18 @@
+<resources>
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=B2:F5:EA:39:D8:75:75:3E:56:C9:BC:20:47:E0:BC:6F:DF:CD:69:A1%3Bcom.rkuncewicz.traveltimenotifier
+
+    You can also add your credentials to an existing key, using this line:
+    B2:F5:EA:39:D8:75:75:3E:56:C9:BC:20:47:E0:BC:6F:DF:CD:69:A1;com.rkuncewicz.traveltimenotifier
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">
+        AIzaSyBHptGoCFDkj_XJfGeRGz517Le9LC2tJZM
+    </string>
+</resources>

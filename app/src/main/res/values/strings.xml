@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">TravelTimeNotifier</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_main">Main</string>
+    <string name="app_title">Don\'t Be Late</string>
+    <string name="add_new_watcher">Add New Watcher</string>
+    <string name="add_new_notifier_title">Add New Notifier</string>
+    <string name="add_new_notifier">Add Notifier</string>
+    <string name="add_notifier_time">When would you like to arrive?</string>
+    <string name="add_notifier_address">Where would you like to be?</string>
+    <string name="add_notifier_name">Give this notifier a name</string>
+</resources>
