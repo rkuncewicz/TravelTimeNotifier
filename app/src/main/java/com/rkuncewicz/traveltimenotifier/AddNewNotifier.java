@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
@@ -50,10 +51,25 @@ public class AddNewNotifier extends Activity implements GoogleApiClient.Connecti
                 .build();
         mGoogleApiClient.connect();
 
+        AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Check to see if both views have addresses
+                AutoCompleteTextView fromTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_to_address);
+                AutoCompleteTextView toTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_from_address);
+
+                Log.e("oy", toTextView.getText().toString());
+                Log.e("yo", fromTextView.getText().toString());
+            }
+        };
+
         AutoCompleteTextView fromTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_to_address);
         fromTextView.addTextChangedListener(getAutoCompleteTextWatcher(R.id.autocomplete_to_address));
+        fromTextView.setOnItemClickListener(itemClickListener);
+
         AutoCompleteTextView toTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_from_address);
         toTextView.addTextChangedListener(getAutoCompleteTextWatcher(R.id.autocomplete_from_address));
+        toTextView.setOnItemClickListener(itemClickListener);
     }
 
     private TextWatcher getAutoCompleteTextWatcher(final int autoCompleteTextView) {
@@ -103,7 +119,7 @@ public class AddNewNotifier extends Activity implements GoogleApiClient.Connecti
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                Log.e("1", s.toString());
             }
         };
     }
