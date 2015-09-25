@@ -7,6 +7,7 @@
     <string name="add_new_notifier_title">Add New Notifier</string>
     <string name="add_new_notifier">Add Notifier</string>
     <string name="add_notifier_time">When would you like to arrive?</string>
-    <string name="add_notifier_address">Where would you like to be?</string>
+    <string name="add_notifier_from_address">Where are you coming from?</string>
+    <string name="add_notifier_to_address">Where would you like to be?</string>
     <string name="add_notifier_name">Give this notifier a name</string>
 </resources>
