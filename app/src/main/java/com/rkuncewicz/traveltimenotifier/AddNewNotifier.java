@@ -5,25 +5,25 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.AutoCompleteTextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.AutocompletePredictionBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.common.api.PendingResult;
 
-/**
- * Created by rkuncewicz on 9/20/15.
- */
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+
 public class AddNewNotifier extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
@@ -50,18 +50,22 @@ public class AddNewNotifier extends Activity implements GoogleApiClient.Connecti
                 .build();
         mGoogleApiClient.connect();
 
-        EditText addressText = (EditText)findViewById(R.id.editNotifierAddress);
-        addressText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        AutoCompleteTextView fromTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_to_address);
+        fromTextView.addTextChangedListener(getAutoCompleteTextWatcher(R.id.autocomplete_to_address));
+        AutoCompleteTextView toTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_from_address);
+        toTextView.addTextChangedListener(getAutoCompleteTextWatcher(R.id.autocomplete_from_address));
+    }
 
-            }
+    private TextWatcher getAutoCompleteTextWatcher(final int autoCompleteTextView) {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 LatLngBounds strictBounds = new LatLngBounds(
-                        new LatLng(-85, -180),
-                        new LatLng(85, 180)
+                        new LatLng(28.70, -127.50),
+                        new LatLng(48.85, -55.90)
                 );
 
                 PendingResult result =
@@ -71,11 +75,27 @@ public class AddNewNotifier extends Activity implements GoogleApiClient.Connecti
                                 strictBounds,
                                 null
                         );
+
                 result.setResultCallback(new ResultCallback() {
                     @Override
                     public void onResult(Result result) {
+                        AutoCompleteTextView textView = (AutoCompleteTextView) findViewById(autoCompleteTextView);
+                        ArrayList addresses = new ArrayList();
+
                         AutocompletePredictionBuffer buffer = (AutocompletePredictionBuffer) result;
+                        Log.e("result", "Halo");
                         Log.e("result", buffer.toString());
+                        Log.e("count", Integer.toString(buffer.getCount()));
+                        for (AutocompletePrediction location: buffer) {
+                            Log.e("desc", location.getDescription());
+                            Log.e("id", location.getPlaceId());
+                            addresses.add(location.getDescription());
+                        }
+
+                        ArrayAdapter<String> adapter =
+                                new ArrayAdapter(getBaseContext(), android.R.layout.simple_list_item_1, addresses);
+                        textView.setAdapter(adapter);
+
                         buffer.release();
                     }
                 });
@@ -85,7 +105,7 @@ public class AddNewNotifier extends Activity implements GoogleApiClient.Connecti
             public void afterTextChanged(Editable s) {
 
             }
-        });
+        };
     }
 
     protected void onResume() {
