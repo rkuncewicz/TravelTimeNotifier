@@ -46,24 +46,11 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/add_notifier_time"
-        android:id="@+id/addNotifierTime" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="time"
-        android:ems="10"
-        android:id="@+id/editNotifierTime" />
-
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/add_new_notifier"
-        android:id="@+id/addNewNotifierButton" />
+        android:text="@string/next_step"
+        android:id="@+id/goToArrivalTimeButton"
+        android:layout_gravity="right" />
 </LinearLayout>

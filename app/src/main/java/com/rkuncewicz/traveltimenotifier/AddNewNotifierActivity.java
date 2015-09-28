@@ -1,6 +1,7 @@
 package com.rkuncewicz.traveltimenotifier;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -21,26 +23,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.common.api.PendingResult;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
-public class AddNewNotifier extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class AddNewNotifierActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_new_notifier);
-
-        findViewById(R.id.addNewNotifierButton).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                }
-        );
+        final Intent notifierIntent = new Intent(getApplicationContext(), AddNewNotifierActivity.class);
 
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
@@ -63,13 +55,35 @@ public class AddNewNotifier extends Activity implements GoogleApiClient.Connecti
             }
         };
 
-        AutoCompleteTextView fromTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_to_address);
+        final AutoCompleteTextView fromTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_to_address);
         fromTextView.addTextChangedListener(getAutoCompleteTextWatcher(R.id.autocomplete_to_address));
         fromTextView.setOnItemClickListener(itemClickListener);
 
-        AutoCompleteTextView toTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_from_address);
+        final AutoCompleteTextView toTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_from_address);
         toTextView.addTextChangedListener(getAutoCompleteTextWatcher(R.id.autocomplete_from_address));
         toTextView.setOnItemClickListener(itemClickListener);
+
+        Button goToArrivalTime = (Button) findViewById(R.id.goToArrivalTimeButton);
+        goToArrivalTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Check if required fields are completed
+                String fromTextValue = fromTextView.getText().toString();
+                boolean invalidFromText = fromTextValue == null || fromTextValue.isEmpty();
+                String toTextValue = toTextView.getText().toString();
+                boolean invalidToText = toTextValue == null || toTextValue.isEmpty();
+
+                if (invalidFromText || invalidToText) {
+                    if(invalidFromText) fromTextView.setBackground(getDrawable(R.drawable.backgroundshape));
+                    if (invalidToText) toTextView.setBackground(getDrawable(R.drawable.backgroundshape));
+                } else {
+                    notifierIntent.putExtra("name", R.id.editNotifierName);
+                    notifierIntent.putExtra("from", fromTextValue);
+                    notifierIntent.putExtra("to", toTextValue);
+                    startActivity(new Intent(getBaseContext(), AddArrivalTimeActivity.class));
+                }
+            }
+        });
     }
 
     private TextWatcher getAutoCompleteTextWatcher(final int autoCompleteTextView) {
@@ -119,7 +133,7 @@ public class AddNewNotifier extends Activity implements GoogleApiClient.Connecti
 
             @Override
             public void afterTextChanged(Editable s) {
-                Log.e("1", s.toString());
+
             }
         };
     }

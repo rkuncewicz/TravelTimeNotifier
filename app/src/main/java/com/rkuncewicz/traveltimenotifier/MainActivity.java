@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 public class MainActivity extends Activity {
 
     public void addNewNotifier(){
-        startActivity(new Intent(this, AddNewNotifier.class));
+        startActivity(new Intent(this, AddNewNotifierActivity.class));
     }
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <uses-sdk android:minSdkVersion="21" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -35,8 +37,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddNewNotifier"
+            android:name=".AddNewNotifierActivity"
             android:label="@string/add_new_notifier_title" >
+        </activity>
+        <activity
+            android:name=".AddArrivalTimeActivity"
+            android:label="@string/add_arrival_time" >
         </activity>
     </application>
 

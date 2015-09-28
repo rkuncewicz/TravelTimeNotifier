@@ -5,9 +5,9 @@
     <string name="app_title">Don\'t Be Late</string>
     <string name="add_new_watcher">Add New Watcher</string>
     <string name="add_new_notifier_title">Add New Notifier</string>
-    <string name="add_new_notifier">Add Notifier</string>
-    <string name="add_notifier_time">When would you like to arrive?</string>
+    <string name="next_step">Next</string>
     <string name="add_notifier_from_address">Where are you coming from?</string>
     <string name="add_notifier_to_address">Where would you like to be?</string>
     <string name="add_notifier_name">Give this notifier a name</string>
+    <string name="add_arrival_time">What time would you like to arrive?</string>
 </resources>
