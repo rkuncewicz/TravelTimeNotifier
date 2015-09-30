@@ -3,6 +3,7 @@ package com.rkuncewicz.traveltimenotifier;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TimePicker;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Created by rkuncewicz on 9/20/15.
@@ -30,20 +32,21 @@ public class AddArrivalTimeActivity extends Activity {
                 int currentApiVersion = android.os.Build.VERSION.SDK_INT;
                 if (currentApiVersion > android.os.Build.VERSION_CODES.LOLLIPOP_MR1){
                     hour = arrivalTime.getHour() * (60 * 60 * 1000);
-                    minute = arrivalTime.getMinute() * (60*1000);
+                    minute = arrivalTime.getMinute() * (60 * 1000);
                 } else {
                     hour = arrivalTime.getCurrentHour() * (60 * 60 * 1000);
-                    minute = arrivalTime.getCurrentMinute() * (60*1000);
+                    minute = arrivalTime.getCurrentMinute() * (60 * 1000);
                 }
 
                 Intent intent = new Intent(getBaseContext(), VerifyDirectionsActivity.class);
                 Bundle extras = getIntent().getExtras();
                 if (extras != null) {
+                    Log.e("bleh", extras.getString("name"));
                     intent.putExtra("name", extras.getString("name"));
                     intent.putExtra("from", extras.getString("from"));
                     intent.putExtra("to", extras.getString("to"));
                 }
-                intent.putExtra("arrival_time", new Date(hour + minute));
+                intent.putExtra("arrival_time", hour + minute);
                 startActivity(intent);
             }
         });

@@ -44,6 +44,10 @@
             android:name=".AddArrivalTimeActivity"
             android:label="@string/add_arrival_time" >
         </activity>
+        <activity
+            android:name=".VerifyDirectionsActivity"
+            android:label="@string/verify_directions" >
+        </activity>
     </application>
 
 </manifest>

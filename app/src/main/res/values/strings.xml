@@ -10,4 +10,5 @@
     <string name="add_notifier_to_address">Where would you like to be?</string>
     <string name="add_notifier_name">Give this notifier a name</string>
     <string name="add_arrival_time">What time would you like to arrive?</string>
+    <string name="verify_directions">Verify Directions</string>
 </resources>

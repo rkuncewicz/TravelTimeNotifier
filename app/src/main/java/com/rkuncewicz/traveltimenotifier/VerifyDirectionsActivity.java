@@ -9,6 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import java.sql.Time;
+import java.util.Date;
+import java.util.Objects;
+
 /**
  * Created by rkuncewicz on 9/20/15.
  */
@@ -19,14 +23,21 @@ public class VerifyDirectionsActivity extends Activity {
     }
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.verify_directions);
+        //setContentView(R.layout.verify_directions);
 
         Bundle extras = getIntent().getExtras();
+        Date arrivalTime;
+        String name, from, to;
         if (extras != null) {
-            Log.e("name", extras.getString("name").toString());
-            Log.e("from", extras.getString("from").toString());
-            Log.e("to", extras.getString("to").toString());
-            Log.e("to", extras.getString("to").toString());
+            name = extras.getString("name");
+            from = extras.getString("from").toString();
+            to = extras.getString("to").toString();
+            int arrivalTime_ms = extras.getInt("arrival_time");
+
+            Log.e("name", name);
+            Log.e("from", from);
+            Log.e("to", to);
+            Log.e("arrival", Objects.toString(arrivalTime_ms));
         }
     }
 

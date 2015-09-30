@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,7 +33,7 @@ public class AddNewNotifierActivity extends Activity implements GoogleApiClient.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_new_notifier);
-        final Intent notifierIntent = new Intent(getApplicationContext(), AddNewNotifierActivity.class);
+        final Intent notifierIntent = new Intent(this, AddArrivalTimeActivity.class);
 
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
@@ -77,10 +78,11 @@ public class AddNewNotifierActivity extends Activity implements GoogleApiClient.
                     if(invalidFromText) fromTextView.setBackground(getDrawable(R.drawable.backgroundshape));
                     if (invalidToText) toTextView.setBackground(getDrawable(R.drawable.backgroundshape));
                 } else {
-                    notifierIntent.putExtra("name", R.id.editNotifierName);
-                    notifierIntent.putExtra("from", fromTextValue);
-                    notifierIntent.putExtra("to", toTextValue);
-                    startActivity(new Intent(getBaseContext(), AddArrivalTimeActivity.class));
+                    final TextView name = (TextView) findViewById(R.id.editNotifierName);
+                    notifierIntent.putExtra("name", name.getText().toString());
+                    notifierIntent.putExtra("from", fromTextValue.toString());
+                    notifierIntent.putExtra("to", toTextValue.toString());
+                    startActivity(notifierIntent);
                 }
             }
         });
