@@ -43,8 +43,8 @@ public class AddArrivalTimeActivity extends Activity {
                 if (extras != null) {
                     Log.e("bleh", extras.getString("name"));
                     intent.putExtra("name", extras.getString("name"));
-                    intent.putExtra("from", extras.getString("from"));
-                    intent.putExtra("to", extras.getString("to"));
+                    intent.putExtra("startingAddressName", extras.getString("startingAddressName"));
+                    intent.putExtra("destinationAddressName", extras.getString("destinationAddressName"));
                 }
                 intent.putExtra("arrival_time", hour + minute);
                 startActivity(intent);

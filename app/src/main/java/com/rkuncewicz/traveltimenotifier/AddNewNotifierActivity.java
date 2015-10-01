@@ -29,11 +29,15 @@ import java.util.ArrayList;
 public class AddNewNotifierActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
+    private ArrayList<AutocompletePrediction> mPredictionList;
+    private AutocompletePrediction mFromAddress;
+    private AutocompletePrediction mToAddress;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_new_notifier);
         final Intent notifierIntent = new Intent(this, AddArrivalTimeActivity.class);
+        mPredictionList = new ArrayList<>();
 
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
@@ -50,7 +54,23 @@ public class AddNewNotifierActivity extends Activity implements GoogleApiClient.
                 //Check to see if both views have addresses
                 AutoCompleteTextView fromTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_to_address);
                 AutoCompleteTextView toTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_from_address);
+                String fromText = fromTextView.getText().toString();
+                String toText = toTextView.getText().toString();
 
+                if(fromText != null && !fromText.isEmpty()) {
+                    mFromAddress = mPredictionList.get(position);
+                }
+                if(toText != null && !toText.isEmpty()) {
+                    mToAddress = mPredictionList.get(position);
+                }
+
+                if(mFromAddress != null) {
+                    Log.e("Address", mFromAddress.getDescription().toString());
+                }
+                if (mToAddress != null) {
+                    Log.e("AddressTo", mToAddress.getDescription().toString());
+                }
+                Log.e("position", position + " blah " + id);
                 Log.e("oy", toTextView.getText().toString());
                 Log.e("yo", fromTextView.getText().toString());
             }
@@ -80,8 +100,8 @@ public class AddNewNotifierActivity extends Activity implements GoogleApiClient.
                 } else {
                     final TextView name = (TextView) findViewById(R.id.editNotifierName);
                     notifierIntent.putExtra("name", name.getText().toString());
-                    notifierIntent.putExtra("from", fromTextValue.toString());
-                    notifierIntent.putExtra("to", toTextValue.toString());
+                    notifierIntent.putExtra("startingAddressName", fromTextValue.toString());
+                    notifierIntent.putExtra("destinationAddressName", toTextValue.toString());
                     startActivity(notifierIntent);
                 }
             }
@@ -115,6 +135,7 @@ public class AddNewNotifierActivity extends Activity implements GoogleApiClient.
                         ArrayList addresses = new ArrayList();
 
                         AutocompletePredictionBuffer buffer = (AutocompletePredictionBuffer) result;
+                        mPredictionList.clear();
                         Log.e("result", "Halo");
                         Log.e("result", buffer.toString());
                         Log.e("count", Integer.toString(buffer.getCount()));
@@ -122,6 +143,7 @@ public class AddNewNotifierActivity extends Activity implements GoogleApiClient.
                             Log.e("desc", location.getDescription());
                             Log.e("id", location.getPlaceId());
                             addresses.add(location.getDescription());
+                            mPredictionList.add(location.freeze());
                         }
 
                         ArrayAdapter<String> adapter =
