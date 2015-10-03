@@ -25,13 +25,14 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.common.api.PendingResult;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class AddNewNotifierActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
     private ArrayList<AutocompletePrediction> mPredictionList;
-    private AutocompletePrediction mFromAddress;
-    private AutocompletePrediction mToAddress;
+    private AutocompletePrediction mDestinationAddress;
+    private AutocompletePrediction mStartingAddress;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,41 +49,47 @@ public class AddNewNotifierActivity extends Activity implements GoogleApiClient.
                 .build();
         mGoogleApiClient.connect();
 
-        AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
+        AdapterView.OnItemClickListener fromItemClickListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Check to see if both views have addresses
                 AutoCompleteTextView fromTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_to_address);
-                AutoCompleteTextView toTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_from_address);
                 String fromText = fromTextView.getText().toString();
+                Log.e("ID2", Objects.toString(R.id.autocomplete_from_address));
+                if (fromText != null && !fromText.isEmpty()) {
+                    mStartingAddress = mPredictionList.get(position);
+                }
+                Log.e("yo", fromTextView.getText().toString());
+            }
+        };
+
+        AdapterView.OnItemClickListener toItemClickListener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                AutoCompleteTextView toTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_from_address);
                 String toText = toTextView.getText().toString();
+                Log.e("ID1", Objects.toString(R.id.autocomplete_to_address));
 
-                if(fromText != null && !fromText.isEmpty()) {
-                    mFromAddress = mPredictionList.get(position);
-                }
                 if(toText != null && !toText.isEmpty()) {
-                    mToAddress = mPredictionList.get(position);
+                    mDestinationAddress = mPredictionList.get(position);
                 }
-
-                if(mFromAddress != null) {
-                    Log.e("Address", mFromAddress.getDescription().toString());
+                if(mStartingAddress != null) {
+                    Log.e("Address", mStartingAddress.getDescription().toString());
                 }
-                if (mToAddress != null) {
-                    Log.e("AddressTo", mToAddress.getDescription().toString());
+                if (mDestinationAddress != null) {
+                    Log.e("AddressTo", mDestinationAddress.getDescription().toString());
                 }
                 Log.e("position", position + " blah " + id);
                 Log.e("oy", toTextView.getText().toString());
-                Log.e("yo", fromTextView.getText().toString());
             }
         };
 
         final AutoCompleteTextView fromTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_to_address);
         fromTextView.addTextChangedListener(getAutoCompleteTextWatcher(R.id.autocomplete_to_address));
-        fromTextView.setOnItemClickListener(itemClickListener);
+        fromTextView.setOnItemClickListener(fromItemClickListener);
 
         final AutoCompleteTextView toTextView = (AutoCompleteTextView) findViewById(R.id.autocomplete_from_address);
         toTextView.addTextChangedListener(getAutoCompleteTextWatcher(R.id.autocomplete_from_address));
-        toTextView.setOnItemClickListener(itemClickListener);
+        toTextView.setOnItemClickListener(toItemClickListener);
 
         Button goToArrivalTime = (Button) findViewById(R.id.goToArrivalTimeButton);
         goToArrivalTime.setOnClickListener(new View.OnClickListener() {
@@ -100,8 +107,10 @@ public class AddNewNotifierActivity extends Activity implements GoogleApiClient.
                 } else {
                     final TextView name = (TextView) findViewById(R.id.editNotifierName);
                     notifierIntent.putExtra("name", name.getText().toString());
-                    notifierIntent.putExtra("startingAddressName", fromTextValue.toString());
-                    notifierIntent.putExtra("destinationAddressName", toTextValue.toString());
+                    notifierIntent.putExtra("startingAddressName", mStartingAddress.getDescription());
+                    notifierIntent.putExtra("destinationAddressName", mDestinationAddress.getDescription());
+                    notifierIntent.putExtra("startingAddressId", mStartingAddress.getPlaceId());
+                    notifierIntent.putExtra("destinationAddressId", mDestinationAddress.getPlaceId());
                     startActivity(notifierIntent);
                 }
             }
