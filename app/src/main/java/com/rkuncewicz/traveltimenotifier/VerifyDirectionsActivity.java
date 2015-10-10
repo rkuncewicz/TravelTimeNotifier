@@ -1,12 +1,15 @@
 package com.rkuncewicz.traveltimenotifier;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.Button;
 
-import com.directions.route.AbstractRouting;
 import com.directions.route.Route;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
@@ -15,9 +18,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.places.AutocompletePrediction;
-import com.google.android.gms.location.places.AutocompletePredictionBuffer;
-import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,9 +27,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-
-import java.util.Date;
-import java.util.Objects;
+import com.rkuncewicz.traveltimenotifier.HelperClasses.TravelNotificationContract.NotificationModel;
+import com.rkuncewicz.traveltimenotifier.HelperClasses.TravelNotificationDBHelper;
 
 /**
  * Created by rkuncewicz on 9/20/15.
@@ -44,6 +43,7 @@ public class VerifyDirectionsActivity extends FragmentActivity implements Routin
     private String mDestinationAddressId = "";
     private LatLng mDestinationLatLng;
     private LatLng mStartingLatLng;
+    private Integer mArrivalTime;
 
     public void addNewNotifier() {
         startActivity(new Intent(this, AddNewNotifierActivity.class));
@@ -52,6 +52,32 @@ public class VerifyDirectionsActivity extends FragmentActivity implements Routin
         super.onCreate(savedInstanceState);
         setContentView(R.layout.verify_directions);
 
+        Button addNotificationButton = (Button) findViewById(R.id.addNotificationButton);
+        addNotificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TravelNotificationDBHelper mDbHelper = new TravelNotificationDBHelper(getBaseContext());
+                SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+                // Create a new map of values, where column names are the keys
+                ContentValues values = new ContentValues();
+                values.put(NotificationModel.COLUMN_NAME_NAME, mName);
+                values.put(NotificationModel.COLUMN_NAME_STARTING_NAME, mStartingAddressName);
+                values.put(NotificationModel.COLUMN_NAME_STARTING_ID, mStartingAddressId);
+                values.put(NotificationModel.COLUMN_NAME_DESTINATION_NAME, mDestinationAddressName);
+                values.put(NotificationModel.COLUMN_NAME_DESTINATION_ID, mDestinationAddressId);
+                values.put(NotificationModel.COLUMN_NAME_ARRIVAL_TIME, mArrivalTime);
+
+                // Insert the new row, returning the primary key value of the new row
+                db.insert(
+                    NotificationModel.TABLE_NAME,
+                    null,
+                    values);
+
+                startActivity(new Intent(getBaseContext(), MainActivity.class));
+            }
+        });
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             mName = extras.getString("name");
@@ -59,6 +85,7 @@ public class VerifyDirectionsActivity extends FragmentActivity implements Routin
             mDestinationAddressName = extras.getString("destinationAddressName").toString();
             mStartingAddressId = extras.getString("startingAddressId").toString();
             mDestinationAddressId = extras.getString("destinationAddressId").toString();
+            mArrivalTime = extras.getInt("arrivalTime");
             //int arrivalTime_ms = extras.getInt("arrival_time");
 
             Log.e("name", mName);

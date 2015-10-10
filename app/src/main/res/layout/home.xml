@@ -26,10 +26,12 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:id="@+id/list"
+        android:id="@+id/notificationList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/textView"
-        android:layout_above="@+id/addNotifierButton"></LinearLayout>
+        android:layout_above="@+id/addNotifierButton">
+
+    </LinearLayout>
 </RelativeLayout>
