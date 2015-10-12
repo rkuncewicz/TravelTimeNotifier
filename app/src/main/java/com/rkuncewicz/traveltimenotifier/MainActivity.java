@@ -7,8 +7,10 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import com.rkuncewicz.traveltimenotifier.HelperClasses.TravelNotification;
 import com.rkuncewicz.traveltimenotifier.HelperClasses.TravelNotificationContract.NotificationModel;
 import com.rkuncewicz.traveltimenotifier.HelperClasses.TravelNotificationDBHelper;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -33,27 +36,10 @@ public class MainActivity extends Activity {
     public void addNewNotifier(){
         startActivity(new Intent(this, AddNewNotifierActivity.class));
     }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
-
-        String[] values = new String[] { "Android List View" };
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, values);
-
-        //Add list and listener
-        LinearLayout ll = (LinearLayout) findViewById(R.id.notificationList);
-        for (int i=0; i < adapter.getCount(); i++) {
-            View v = adapter.getView(i, null, null);
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //addNewNotifier();
-                }
-            });
-            ll.addView(v, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        }
 
         //Add listener for new notifiers
         Button b = (Button) findViewById(R.id.addNotifierButton);
@@ -74,41 +60,16 @@ public class MainActivity extends Activity {
     public class readDBAsync extends AsyncTask {
         @Override
         protected Object doInBackground(Object[] params) {
-            TravelNotificationDBHelper dbHelper = new TravelNotificationDBHelper(getBaseContext());
-            SQLiteDatabase dbRead = dbHelper.getReadableDatabase();
-            String[] projection = {
-                    NotificationModel.COLUMN_NAME_NAME,
-                    NotificationModel.COLUMN_NAME_DESTINATION_ID,
-                    NotificationModel.COLUMN_NAME_DESTINATION_NAME,
-                    NotificationModel.COLUMN_NAME_STARTING_ID,
-                    NotificationModel.COLUMN_NAME_STARTING_NAME,
-                    NotificationModel.COLUMN_NAME_ARRIVAL_TIME
-            };
-
-            String sortOrder =
-                    NotificationModel.COLUMN_NAME_NAME + " DESC";
-
-            String selection =  NotificationModel.COLUMN_NAME_NAME + " =?";
-            String[] selectionArgs = {
-                    NotificationModel.COLUMN_NAME_NAME + " =?"
-            };
-
-            Cursor cursor = dbRead.query(
-                    NotificationModel.TABLE_NAME,  // The table to query
-                    projection,                               // The columns to return
-                    null,                                // The columns for the WHERE clause
-                    null,                            // The values for the WHERE clause
-                    null,                                     // don't group the rows
-                    null,                                     // don't filter by row groups
-                    sortOrder                                 // The sort order
-            );
-
+            Cursor cursor = TravelNotificationDBHelper.getAllNotifications(getBaseContext(), null, null, null, null);
             ArrayList<TravelNotification> results = new ArrayList<TravelNotification>();
             cursor.moveToFirst();
             Log.e("Count", Objects.toString(cursor.getCount()));
 
             while (cursor.getCount() > 0) {
                 try {
+                    int id = cursor.getInt(
+                            cursor.getColumnIndexOrThrow(NotificationModel._ID)
+                    );
                     String name = cursor.getString(
                             cursor.getColumnIndexOrThrow(NotificationModel.COLUMN_NAME_NAME)
                     );
@@ -128,7 +89,7 @@ public class MainActivity extends Activity {
                             cursor.getColumnIndexOrThrow(NotificationModel.COLUMN_NAME_ARRIVAL_TIME)
                     );
 
-                    results.add(new TravelNotification(name, destinationId, destinationName, startingId, startingName, arrivalTime));
+                    results.add(new TravelNotification(id, name, destinationId, destinationName, startingId, startingName, arrivalTime));
 
                     Log.e("Woo", name);
                 } catch (Exception e) {
@@ -152,14 +113,33 @@ public class MainActivity extends Activity {
 
                 View linearLayout = findViewById(R.id.notificationList);
                 TextView notificationTV = new TextView(getBaseContext());
+                LinearLayout notificationContainer = new LinearLayout(getBaseContext());
+                Button deleteNotification = new Button(getBaseContext());
+
+                notificationContainer.setOrientation(LinearLayout.HORIZONTAL);
+                notificationContainer.setTag(notification);
+
+                deleteNotification.setText("Delete");
+                deleteNotification.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        LinearLayout container = (LinearLayout)v.getParent();
+                        TravelNotification notification = (TravelNotification) container.getTag();
+                        TravelNotificationDBHelper.deleteNotification(getBaseContext(), notification.getId());
+                        LinearLayout notificationsContainer = (LinearLayout) container.getParent();
+                        notificationsContainer.removeView(container);
+                    }
+                });
 
                 notificationTV.setText(notification.getName());
                 notificationTV.setTextColor(getResources().getColor(android.R.color.black));
                 notificationTV.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT));
-                
-                ((LinearLayout)linearLayout).addView(notificationTV);
+
+                notificationContainer.addView(notificationTV);
+                notificationContainer.addView(deleteNotification);
+                ((LinearLayout)linearLayout).addView(notificationContainer);
             }
         }
     }

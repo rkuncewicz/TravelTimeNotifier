@@ -151,7 +151,8 @@ public class AddNewNotifierActivity extends Activity implements GoogleApiClient.
                         for (AutocompletePrediction location: buffer) {
                             Log.e("desc", location.getDescription());
                             Log.e("id", location.getPlaceId());
-                            addresses.add(location.getDescription());
+                            // TODO: What do I do with this return?
+                            Boolean addressAdded = addresses.add(location.getDescription());
                             mPredictionList.add(location.freeze());
                         }
 
