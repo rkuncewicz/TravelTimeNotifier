@@ -149,8 +149,8 @@ public class VerifyDirectionsActivity extends FragmentActivity implements Routin
     }
 
     private void setMarkerOnMap() {
-        LatLng start = mStartingLatLng; //new LatLng(18.015365, -77.499382);
-        LatLng end = mDestinationLatLng; //new LatLng(18.012590, -77.500659);
+        LatLng start = mStartingLatLng;
+        LatLng end = mDestinationLatLng;
 
         Log.e("bloo1", start.toString());
         Log.e("bloo2", end.toString());

@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rkuncewicz.traveltimenotifier.HelperClasses.TravelNotification;
+import com.rkuncewicz.traveltimenotifier.HelperClasses.TravelNotificationArrivalTime;
 import com.rkuncewicz.traveltimenotifier.HelperClasses.TravelNotificationContract.NotificationModel;
 import com.rkuncewicz.traveltimenotifier.HelperClasses.TravelNotificationDBHelper;
 
@@ -76,13 +76,13 @@ public class MainActivity extends Activity {
                     String destinationName = cursor.getString(
                             cursor.getColumnIndexOrThrow(NotificationModel.COLUMN_NAME_DESTINATION_NAME)
                     );
-                    int destinationId = cursor.getInt(
+                    String destinationId = cursor.getString(
                             cursor.getColumnIndexOrThrow(NotificationModel.COLUMN_NAME_DESTINATION_ID)
                     );
                     String startingName = cursor.getString(
                             cursor.getColumnIndexOrThrow(NotificationModel.COLUMN_NAME_STARTING_NAME)
                     );
-                    int startingId = cursor.getInt(
+                    String startingId = cursor.getString(
                             cursor.getColumnIndexOrThrow(NotificationModel.COLUMN_NAME_STARTING_ID)
                     );
                     int arrivalTime = cursor.getInt(
@@ -106,15 +106,18 @@ public class MainActivity extends Activity {
         protected void onPostExecute(Object results) {
             ArrayList<TravelNotification> notifications = (ArrayList<TravelNotification>) results;
 
-            Log.e("Hey", Objects.toString(notifications.size()));
+            Log.e("ArraySize", Objects.toString(notifications.size()));
 
             for(TravelNotification notification : notifications) {
-                Log.e("Hey", Objects.toString(notification.getName()));
+                Log.e("NotificationName", Objects.toString(notification.getName()));
 
                 View linearLayout = findViewById(R.id.notificationList);
                 TextView notificationTV = new TextView(getBaseContext());
                 LinearLayout notificationContainer = new LinearLayout(getBaseContext());
                 Button deleteNotification = new Button(getBaseContext());
+                TextView arrivalTimeTV = new TextView(getBaseContext());
+
+                new TravelNotificationArrivalTime(getBaseContext(), arrivalTimeTV, notification.getStartingId(), notification.getDestinationId()).execute();
 
                 notificationContainer.setOrientation(LinearLayout.HORIZONTAL);
                 notificationContainer.setTag(notification);
@@ -123,7 +126,7 @@ public class MainActivity extends Activity {
                 deleteNotification.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        LinearLayout container = (LinearLayout)v.getParent();
+                        LinearLayout container = (LinearLayout) v.getParent();
                         TravelNotification notification = (TravelNotification) container.getTag();
                         TravelNotificationDBHelper.deleteNotification(getBaseContext(), notification.getId());
                         LinearLayout notificationsContainer = (LinearLayout) container.getParent();
@@ -133,11 +136,13 @@ public class MainActivity extends Activity {
 
                 notificationTV.setText(notification.getName());
                 notificationTV.setTextColor(getResources().getColor(android.R.color.black));
+                arrivalTimeTV.setTextColor(getResources().getColor(android.R.color.black));
                 notificationTV.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT));
 
                 notificationContainer.addView(notificationTV);
+                notificationContainer.addView(arrivalTimeTV);
                 notificationContainer.addView(deleteNotification);
                 ((LinearLayout)linearLayout).addView(notificationContainer);
             }
